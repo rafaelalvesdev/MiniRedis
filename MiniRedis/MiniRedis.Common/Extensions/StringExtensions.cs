@@ -4,7 +4,7 @@
     {
         public static string Truncate(this string value, string delimiter)
         {
-            if (string.IsNullOrWhiteSpace(value) || string.IsNullOrWhiteSpace(delimiter))
+            if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(delimiter))
                 return value;
 
             var position = value.IndexOf(delimiter);

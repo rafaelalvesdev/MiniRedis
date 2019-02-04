@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MiniRedis.Services.Processor.Interfaces;
-using MiniRedis.Services.Storage.Interfaces;
+using MiniRedis.Core.Processor.Interfaces;
+using MiniRedis.Core.Storage.Interfaces;
 using System.Linq;
 
 namespace MiniRedis.API.Controllers

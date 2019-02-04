@@ -47,7 +47,7 @@ namespace MiniRedis.API
                        .AllowCredentials();
             }));
 
-            new MiniRedis.Services.Startup(Configuration).ConfigureServices(services);
+            new MiniRedis.Core.Startup(Configuration).ConfigureServices(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
