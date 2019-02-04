@@ -9,6 +9,8 @@ namespace MiniRedis.Services.Commands.Evaluators
 {
     public class ZRangeCommand : AbstractCommand, ICommand
     {
+        public override string CommandName => "ZRANGE";
+
         public override string SyntaxPattern => @"^ZRANGE\s*?(?<Key>[^\s]*)?\s*?(?<Start>[^\s]*)?\s*?(?<Stop>[^\s]*)?$";
 
         public override string[] ExpectedArgs => new[] { "Key", "Start", "Stop" };
@@ -18,7 +20,7 @@ namespace MiniRedis.Services.Commands.Evaluators
             if (!args.ContainsKey("Key") || string.IsNullOrWhiteSpace(args["Key"]) ||
                 !args.ContainsKey("Start") || string.IsNullOrWhiteSpace(args["Start"]) ||
                 !args.ContainsKey("Stop") || string.IsNullOrWhiteSpace(args["Stop"]))
-                return new GenericResult().Invalid();
+                return new GenericResult().WithError("ERR wrong number of arguments for 'zrange' command");
 
             if (!int.TryParse(args["Start"], out int start))
                 return new GenericResult().Invalid().WithError("ERR value is not an integer or out of range");

@@ -8,6 +8,8 @@ namespace MiniRedis.Services.Commands.Evaluators
 {
     public class ZCardCommand : AbstractCommand, ICommand
     {
+        public override string CommandName => "ZCARD";
+
         public override string SyntaxPattern => @"^ZCARD\s*?(?<Key>[^$]*)?$";
 
         public override string[] ExpectedArgs => new[] { "Key" };
@@ -15,7 +17,7 @@ namespace MiniRedis.Services.Commands.Evaluators
         public override GenericResult ValidateArguments(CommandArguments args)
         {
             if (!args.ContainsKey("Key") || string.IsNullOrWhiteSpace(args["Key"]))
-                return new GenericResult().Invalid();
+                return new GenericResult().WithError("ERR wrong number of arguments for 'zcard' command");
 
             return new GenericResult().Valid();
         }

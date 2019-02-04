@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using MiniRedis.Services.Commands.Evaluators;
 using MiniRedis.Services.Commands.Interfaces;
 using MiniRedis.Services.Commands.Library;
@@ -38,7 +39,11 @@ namespace MiniRedis.Services.Test.Fixtures
 
             services.AddSingleton<ICommandResolver, CommandResolver>();
 
-            services.AddSingleton<IDatabase, InMemoryDatabase>();
+            services.AddSingleton<IDatabase>(provider => {
+                return new InMemoryDatabase(
+                    new MemoryCache(
+                        new MemoryCacheOptions()));
+            });
 
             ServiceProvider = services.BuildServiceProvider();
         }

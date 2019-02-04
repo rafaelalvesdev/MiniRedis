@@ -11,6 +11,7 @@ namespace MiniRedis.Services.Commands.Evaluators
 {
     public abstract class AbstractCommand : ICommand
     {
+        public abstract string CommandName { get; }
         public abstract string SyntaxPattern { get; }
         public virtual string[] ExpectedArgs => new string[0];
 

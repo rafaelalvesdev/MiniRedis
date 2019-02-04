@@ -10,6 +10,6 @@ namespace MiniRedis.Services.Storage.Interfaces
 
         GenericResult<DatabaseValue> Get(string key);
 
-        GenericResult<string[]> GetAllKeys();
+        GenericResult<long> GetKeysCount();
     }
 }

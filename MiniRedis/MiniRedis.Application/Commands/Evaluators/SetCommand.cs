@@ -2,7 +2,6 @@
 using MiniRedis.Common.Model;
 using MiniRedis.Services.Commands.Interfaces;
 using MiniRedis.Services.Storage;
-using MiniRedis.Services.Storage.Enums;
 using MiniRedis.Services.Storage.Interfaces;
 using System;
 using System.Linq;
@@ -12,11 +11,22 @@ namespace MiniRedis.Services.Commands.Evaluators
 {
     public class SetCommand : AbstractCommand, ICommand
     {
+        public override string CommandName => "SET";
+
         public override string SyntaxPattern => @"^SET\s*(?<Key>[^\s]*)\s(?<Value>[^\s|$]*)\s?(?<Options>EX\s*[0-9]*)?$";
 
         public override string[] ExpectedArgs => new[] { "Key", "Value", "Options" };
 
         private object lockObject = new object();
+
+        public override GenericResult ValidateArguments(CommandArguments args)
+        {
+            if (!args.ContainsKey("Key") || string.IsNullOrWhiteSpace(args["Key"]) ||
+                !args.ContainsKey("Value") || string.IsNullOrWhiteSpace(args["Value"]))
+                return new GenericResult().WithError("ERR wrong number of arguments for 'set' command");
+
+            return base.ValidateArguments(args);
+        }
 
         public override CommandArguments GetArguments(string commandLine)
         {

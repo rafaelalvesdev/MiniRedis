@@ -4,12 +4,13 @@ using MiniRedis.Services.Commands.Interfaces;
 using MiniRedis.Services.Storage;
 using MiniRedis.Services.Storage.Enums;
 using MiniRedis.Services.Storage.Interfaces;
-using System.Collections.Generic;
 
 namespace MiniRedis.Services.Commands.Evaluators
 {
     public class ZAddCommand : AbstractCommand, ICommand
     {
+        public override string CommandName => "ZADD";
+
         public override string SyntaxPattern => @"^ZADD\s*?(?<Key>[^\s]*)?\s*?(?<Score>[^\s]*)?\s*?(?<Member>[^\s]*)?$";
 
         public override string[] ExpectedArgs => new[] { "Key", "Score", "Member" };
@@ -18,13 +19,15 @@ namespace MiniRedis.Services.Commands.Evaluators
 
         public override GenericResult ValidateArguments(CommandArguments args)
         {
-            if (!args.ContainsKey("Key") || !args.ContainsKey("Score") || !args.ContainsKey("Member"))
-                return new GenericResult().Invalid().WithError("ERR wrong number of arguments for 'zadd' command");
+            if (!args.ContainsKey("Key") || string.IsNullOrWhiteSpace(args["Key"]) ||
+                !args.ContainsKey("Score") || string.IsNullOrWhiteSpace(args["Score"]) ||
+                !args.ContainsKey("Member") || string.IsNullOrWhiteSpace(args["Member"]))
+                return new GenericResult().WithError("ERR wrong number of arguments for 'zadd' command");
 
             if(!float.TryParse(args["Score"], out float score))
                 return new GenericResult().Invalid().WithError("ERR value is not a valid float");
 
-            return new GenericResult().Valid();
+            return base.ValidateArguments(args);
         }
 
         public override EvaluationResult Evaluate(IDatabase database, CommandArguments args)

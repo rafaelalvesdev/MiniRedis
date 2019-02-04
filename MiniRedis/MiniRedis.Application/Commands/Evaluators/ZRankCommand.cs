@@ -8,6 +8,8 @@ namespace MiniRedis.Services.Commands.Evaluators
 {
     public class ZRankCommand : AbstractCommand, ICommand
     {
+        public override string CommandName => "ZRANK";
+
         public override string SyntaxPattern => @"^ZRANK\s*?(?<Key>[^\s]*)?\s*?(?<Member>[^\s]*)?$";
 
         public override string[] ExpectedArgs => new[] { "Key", "Member" };
@@ -16,7 +18,7 @@ namespace MiniRedis.Services.Commands.Evaluators
         {
             if (!args.ContainsKey("Key") || string.IsNullOrWhiteSpace(args["Key"]) ||
                 !args.ContainsKey("Member") || string.IsNullOrWhiteSpace(args["Member"]))
-                return new GenericResult().Invalid();
+                return new GenericResult().WithError("ERR wrong number of arguments for 'zrank' command");
 
             return new GenericResult().Valid();
         }

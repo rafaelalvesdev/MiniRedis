@@ -9,6 +9,7 @@ namespace MiniRedis.API.Controllers
     [Controller]
     public class CommandController : ControllerBase
     {
+        [HttpGet]
         [Route("")]
         public ActionResult<string> RunCommand(
             [FromServices] ICommandResolver commandResolver,

@@ -9,6 +9,8 @@ namespace MiniRedis.Services.Commands.Evaluators
 {
     public class IncrCommand : AbstractCommand, ICommand
     {
+        public override string CommandName => "INCR";
+
         public override string SyntaxPattern => @"^INCR\s*?(?<Key>[^$]*)?$";
 
         public override string[] ExpectedArgs => new[] { "Key" };
@@ -16,9 +18,9 @@ namespace MiniRedis.Services.Commands.Evaluators
         public override GenericResult ValidateArguments(CommandArguments args)
         {
             if (!args.ContainsKey("Key") || string.IsNullOrWhiteSpace(args["Key"]))
-                return new GenericResult().Invalid();
+                return new GenericResult().WithError("ERR wrong number of arguments for 'incr' command");
 
-            return new GenericResult().Valid();
+            return base.ValidateArguments(args);
         }
 
         public override EvaluationResult Evaluate(IDatabase database, CommandArguments args)

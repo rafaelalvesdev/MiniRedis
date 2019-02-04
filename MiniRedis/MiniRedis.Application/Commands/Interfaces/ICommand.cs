@@ -6,6 +6,8 @@ namespace MiniRedis.Services.Commands.Interfaces
 {
     public interface ICommand
     {
+        string CommandName { get; }
+
         string SyntaxPattern { get; }
 
         string[] ExpectedArgs { get; }

@@ -53,7 +53,7 @@ namespace MiniRedis.Services.Commands
                         return "(empty list or set)";
 
                     var i = 0;
-                    return StringArray.Aggregate((a, b) => $"{++i}) {a}\n{++i}) {b}");
+                    return new string[1] { string.Empty }.Concat(StringArray).Aggregate((a, b) => $"{a}\n{++i}) {b}").Trim();
             }
 
             return string.Empty;
