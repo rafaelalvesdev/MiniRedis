@@ -22,10 +22,17 @@ namespace MiniRedis.Services.Commands.Processor
             foreach (var command in commands)
                 if(command.SyntaxMatchesCommandLine(commandLine))
                 {
+                    var args = command.GetArguments(commandLine);
+                    var argsValidation = command.ValidateArguments(args);
+                    if (!argsValidation.IsValid)
+                    {
+                        return new CommandResolverResult().Valid().Merge(argsValidation);
+                    }
+
                     return new CommandResolverResult()
                     {
                         Command = command,
-                        Arguments = command.GetArguments(commandLine),
+                        Arguments = args,
                     };
                 }
 

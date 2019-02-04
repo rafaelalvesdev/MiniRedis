@@ -5,10 +5,15 @@ namespace MiniRedis.Services.Storage
 {
     public class DatabaseValue
     {
-        public DatabaseValue(DatabaseValueType type, object value, DateTimeOffset? ttl)
+        public DatabaseValue(DatabaseValueType type, object value)
         {
             Type = type;
             Value = value;
+        }
+
+        public DatabaseValue(DatabaseValueType type, object value, DateTimeOffset? ttl)
+            : this(type, value)
+        {
             TTL = ttl;
         }
 

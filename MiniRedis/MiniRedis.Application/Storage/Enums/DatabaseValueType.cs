@@ -3,6 +3,6 @@
     public enum DatabaseValueType
     {
         Plain = 0,
-        Collection = 1,
+        ScoredCollection = 1,
     }
 }

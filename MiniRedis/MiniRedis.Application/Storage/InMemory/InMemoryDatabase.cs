@@ -2,14 +2,15 @@
 using MiniRedis.Common.Model;
 using MiniRedis.Services.Storage.Interfaces;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace MiniRedis.Services.Storage.InMemory
 {
     public class InMemoryDatabase : IDatabase
     {
-        private Dictionary<string, DatabaseValue> data = new Dictionary<string, DatabaseValue>();
+        private ConcurrentDictionary<string, DatabaseValue> data = new ConcurrentDictionary<string, DatabaseValue>();
+        private object saveLockObject = new object();
 
         public GenericResult<DatabaseValue> Get(string key)
         {
@@ -25,17 +26,14 @@ namespace MiniRedis.Services.Storage.InMemory
 
         public GenericResult<DatabaseValue> Remove(string key)
         {
-            var value = Get(key);
-
-            if (value.IsValid)
-                data.Remove(key);
-
-            return value;            
+            var valid = data.TryRemove(key, out DatabaseValue value);
+            return new GenericResult<DatabaseValue>(value).Valid(valid);
         }
 
         public GenericResult Save(string key, DatabaseValue value)
         {
             data[key] = value;
+
             return new GenericResult().Valid();
         }
 

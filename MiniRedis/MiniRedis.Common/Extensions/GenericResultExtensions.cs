@@ -1,4 +1,5 @@
 ﻿using MiniRedis.Common.Model;
+using System.Linq;
 
 namespace MiniRedis.Common.Extensions
 {
@@ -49,6 +50,16 @@ namespace MiniRedis.Common.Extensions
             where T : GenericResult<T>
         {
             result.Data = data;
+            return result;
+        }
+
+        public static T Merge<T>(this T result, GenericResult value)
+            where T : GenericResult
+        {
+            result.IsValid = result.IsValid && value.IsValid;
+            result.Message = string.Concat(result.Message, " ", value.Message).Trim();
+            result.Errors = result.Errors.Concat(value.Errors).ToList();
+
             return result;
         }
     }

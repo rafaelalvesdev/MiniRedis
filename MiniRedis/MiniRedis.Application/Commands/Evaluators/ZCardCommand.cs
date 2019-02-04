@@ -6,9 +6,9 @@ using MiniRedis.Services.Storage.Interfaces;
 
 namespace MiniRedis.Services.Commands.Evaluators
 {
-    public class GetCommand : AbstractCommand, ICommand
+    public class ZCardCommand : AbstractCommand, ICommand
     {
-        public override string SyntaxPattern => @"^GET\s*(?<Key>[^$]*)?$";
+        public override string SyntaxPattern => @"^ZCARD\s*?(?<Key>[^$]*)?$";
 
         public override string[] ExpectedArgs => new[] { "Key" };
 
@@ -22,16 +22,17 @@ namespace MiniRedis.Services.Commands.Evaluators
 
         public override GenericResult<DatabaseValue> Evaluate(IDatabase database, CommandArguments args)
         {
-            var key = args["Key"];
-            var value = database.Get(key);
+            var key = args["Key"]?.Trim();
+            var item = database.Get(key);
 
-            if (!value.IsValid)
-                return new GenericResult<DatabaseValue>(null).Valid();
+            if (!item.IsValid)
+                return new GenericResult<DatabaseValue>().WithMessage("0");
 
-            if (value.Data.Type != Storage.Enums.DatabaseValueType.Plain)
+            if (item.Data.Type != Storage.Enums.DatabaseValueType.ScoredCollection)
                 return new GenericResult<DatabaseValue>().WithError("WRONGTYPE Operation against a key holding the wrong kind of value");
 
-            return value;
+            var collection = item.Data.Value as ScoredCollection;
+            return new GenericResult<DatabaseValue>().WithMessage((collection?.Collection?.Count ?? 0).ToString());
         }
     }
 }

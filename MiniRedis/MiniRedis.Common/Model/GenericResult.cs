@@ -5,16 +5,16 @@ namespace MiniRedis.Common.Model
 {
     public class GenericResult
     {
-        public bool IsValid { get; internal set; }
+        public bool IsValid { get; internal set; } = true;
 
-        public List<ResultError> Errors { get; set; } = new List<ResultError>();
+        public List<ResultError> Errors { get; internal set; } = new List<ResultError>();
 
-        public string Message { get; set; }
+        public string Message { get; internal set; }
     }
 
     public class ResultError
     {
-        public string Message { get; set; }
+        public string Message { get; internal set; }
     }
 
 

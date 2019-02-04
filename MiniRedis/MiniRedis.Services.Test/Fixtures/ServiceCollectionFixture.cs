@@ -28,6 +28,10 @@ namespace MiniRedis.Services.Test.Fixtures
                 library.RegisterCommand<DelCommand>();
                 library.RegisterCommand<DbSizeCommand>();
                 library.RegisterCommand<IncrCommand>();
+                library.RegisterCommand<ZAddCommand>();
+                library.RegisterCommand<ZCardCommand>();
+                library.RegisterCommand<ZRankCommand>();
+                library.RegisterCommand<ZRangeCommand>();
 
                 return library;
             });

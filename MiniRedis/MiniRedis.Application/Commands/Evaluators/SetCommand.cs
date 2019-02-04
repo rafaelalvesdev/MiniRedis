@@ -16,6 +16,8 @@ namespace MiniRedis.Services.Commands.Evaluators
 
         public override string[] ExpectedArgs => new[] { "Key", "Value", "Options" };
 
+        private object lockObject = new object();
+
         public override CommandArguments GetArguments(string commandLine)
         {
             var args = base.GetArguments(commandLine);
@@ -55,7 +57,9 @@ namespace MiniRedis.Services.Commands.Evaluators
                     if (long.TryParse(args["TTL"], out long ticks))
                         ttl = new DateTimeOffset(new DateTime(ticks));
 
-            var result = database.Save(key, new DatabaseValue(DatabaseValueType.Plain, value, ttl));
+            GenericResult result;
+            lock (lockObject)
+                result = database.Save(key, new DatabaseValue(DatabaseValueType.Plain, value, ttl));
 
             return new GenericResult<DatabaseValue>().Valid(result.IsValid);
         }
