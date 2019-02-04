@@ -46,7 +46,7 @@ namespace MiniRedis.Services.Commands.Evaluators
             return args;
         }
 
-        public override GenericResult<DatabaseValue> Evaluate(IDatabase database, CommandArguments args)
+        public override EvaluationResult Evaluate(IDatabase database, CommandArguments args)
         {
             var key = args["Key"];
             var value = args["Value"];
@@ -59,9 +59,9 @@ namespace MiniRedis.Services.Commands.Evaluators
 
             GenericResult result;
             lock (lockObject)
-                result = database.Save(key, new DatabaseValue(DatabaseValueType.Plain, value, ttl));
+                result = database.Save(key, new DatabaseValue(value, ttl));
 
-            return new GenericResult<DatabaseValue>().Valid(result.IsValid);
+            return new EvaluationResult(result.IsValid ? "OK" : "NOK");
         }
     }
 }

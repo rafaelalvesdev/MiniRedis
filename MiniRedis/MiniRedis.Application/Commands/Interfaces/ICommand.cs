@@ -16,6 +16,6 @@ namespace MiniRedis.Services.Commands.Interfaces
 
         GenericResult ValidateArguments(CommandArguments args);
 
-        GenericResult<DatabaseValue> Evaluate(IDatabase database, CommandArguments args);
+        EvaluationResult Evaluate(IDatabase database, CommandArguments args);
     }
 }

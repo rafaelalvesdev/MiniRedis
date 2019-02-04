@@ -1,7 +1,6 @@
 ﻿using MiniRedis.Common.Extensions;
 using MiniRedis.Common.Model;
 using MiniRedis.Services.Commands.Interfaces;
-using MiniRedis.Services.Storage;
 using MiniRedis.Services.Storage.Interfaces;
 
 namespace MiniRedis.Services.Commands.Evaluators
@@ -20,12 +19,12 @@ namespace MiniRedis.Services.Commands.Evaluators
             return new GenericResult().Valid();
         }
 
-        public override GenericResult<DatabaseValue> Evaluate(IDatabase database, CommandArguments args)
+        public override EvaluationResult Evaluate(IDatabase database, CommandArguments args)
         {
             var key = args["Key"];            
             var result = database.Remove(key);
 
-            return new GenericResult<DatabaseValue>().Valid().WithMessage(!result.IsValid ? "0" : "1");
+            return new EvaluationResult(result.IsValid ? 1 : 0);
         }
     }
 }

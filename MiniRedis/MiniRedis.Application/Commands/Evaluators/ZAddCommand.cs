@@ -27,7 +27,7 @@ namespace MiniRedis.Services.Commands.Evaluators
             return new GenericResult().Valid();
         }
 
-        public override GenericResult<DatabaseValue> Evaluate(IDatabase database, CommandArguments args)
+        public override EvaluationResult Evaluate(IDatabase database, CommandArguments args)
         {
             var key = args["Key"]?.Trim();
             var member = args["Member"]?.Trim();
@@ -41,7 +41,7 @@ namespace MiniRedis.Services.Commands.Evaluators
                 if (itemResult.IsValid)
                 {
                     if (itemResult.Data.Type != DatabaseValueType.ScoredCollection)
-                        return new GenericResult<DatabaseValue>().WithError("WRONGTYPE Operation against a key holding the wrong kind of value");
+                        return new EvaluationResult().WithError("WRONGTYPE Operation against a key holding the wrong kind of value");
 
                     collection = itemResult.Data.Value as ScoredCollection;
                 }
@@ -50,10 +50,10 @@ namespace MiniRedis.Services.Commands.Evaluators
                 collection.Collection[member] = score;
                 collection.UpdateSortedCollection();
 
-                result = database.Save(key, new DatabaseValue(DatabaseValueType.ScoredCollection, collection, null));
+                result = database.Save(key, new DatabaseValue(collection));
             }
 
-            return new GenericResult<DatabaseValue>().Valid(result.IsValid);
+            return new EvaluationResult(result.IsValid ? 1 : 0);
         }
     }
 }

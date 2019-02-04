@@ -20,19 +20,19 @@ namespace MiniRedis.Services.Commands.Evaluators
             return new GenericResult().Valid();
         }
 
-        public override GenericResult<DatabaseValue> Evaluate(IDatabase database, CommandArguments args)
+        public override EvaluationResult Evaluate(IDatabase database, CommandArguments args)
         {
             var key = args["Key"]?.Trim();
             var item = database.Get(key);
 
             if (!item.IsValid)
-                return new GenericResult<DatabaseValue>().WithMessage("0");
+                return new EvaluationResult(0);
 
             if (item.Data.Type != Storage.Enums.DatabaseValueType.ScoredCollection)
-                return new GenericResult<DatabaseValue>().WithError("WRONGTYPE Operation against a key holding the wrong kind of value");
+                return new EvaluationResult().WithError("WRONGTYPE Operation against a key holding the wrong kind of value");
 
             var collection = item.Data.Value as ScoredCollection;
-            return new GenericResult<DatabaseValue>().WithMessage((collection?.Collection?.Count ?? 0).ToString());
+            return new EvaluationResult(collection?.Collection?.Count ?? 0);
         }
     }
 }

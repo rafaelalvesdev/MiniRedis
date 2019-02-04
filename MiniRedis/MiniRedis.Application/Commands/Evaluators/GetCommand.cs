@@ -3,6 +3,7 @@ using MiniRedis.Common.Model;
 using MiniRedis.Services.Commands.Interfaces;
 using MiniRedis.Services.Storage;
 using MiniRedis.Services.Storage.Interfaces;
+using System;
 
 namespace MiniRedis.Services.Commands.Evaluators
 {
@@ -20,18 +21,18 @@ namespace MiniRedis.Services.Commands.Evaluators
             return new GenericResult().Valid();
         }
 
-        public override GenericResult<DatabaseValue> Evaluate(IDatabase database, CommandArguments args)
+        public override EvaluationResult Evaluate(IDatabase database, CommandArguments args)
         {
             var key = args["Key"];
             var value = database.Get(key);
 
             if (!value.IsValid)
-                return new GenericResult<DatabaseValue>(null).Valid();
+                return new EvaluationResult((string)null);
 
             if (value.Data.Type != Storage.Enums.DatabaseValueType.Plain)
-                return new GenericResult<DatabaseValue>().WithError("WRONGTYPE Operation against a key holding the wrong kind of value");
-
-            return value;
+                return new EvaluationResult().WithError("WRONGTYPE Operation against a key holding the wrong kind of value");
+            
+            return new EvaluationResult(Convert.ToString(value.Data));
         }
     }
 }

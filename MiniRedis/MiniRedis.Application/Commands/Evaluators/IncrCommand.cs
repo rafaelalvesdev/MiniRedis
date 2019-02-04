@@ -2,16 +2,14 @@
 using MiniRedis.Common.Model;
 using MiniRedis.Services.Commands.Interfaces;
 using MiniRedis.Services.Storage;
-using MiniRedis.Services.Storage.Enums;
 using MiniRedis.Services.Storage.Interfaces;
 using System;
-using System.Linq;
 
 namespace MiniRedis.Services.Commands.Evaluators
 {
     public class IncrCommand : AbstractCommand, ICommand
     {
-        public override string SyntaxPattern => @"^INCR\s*(?<Key>[^$]*)?$";
+        public override string SyntaxPattern => @"^INCR\s*?(?<Key>[^$]*)?$";
 
         public override string[] ExpectedArgs => new[] { "Key" };
 
@@ -23,24 +21,22 @@ namespace MiniRedis.Services.Commands.Evaluators
             return new GenericResult().Valid();
         }
 
-        public override GenericResult<DatabaseValue> Evaluate(IDatabase database, CommandArguments args)
+        public override EvaluationResult Evaluate(IDatabase database, CommandArguments args)
         {
-            var key = args["Key"];
-            var result = database.Get(key);
+            var key = args["Key"]?.Trim();
+            var item = database.Get(key);
 
-            if (!result.IsValid)
-                return result;
-            
-            if(!long.TryParse(Convert.ToString(result.Data.Value), out long number))
-                return new GenericResult<DatabaseValue>().WithError("value is not an integer or out of range");
+            long number = 0;
+            if (item.IsValid && !long.TryParse(Convert.ToString(item.Data.Value), out number))
+                return new EvaluationResult().WithError("value is not an integer or out of range");
 
-            var newValue = new DatabaseValue(DatabaseValueType.Plain, ++number, result.Data.TTL);
+            var newValue = new DatabaseValue((++number).ToString(), item.Data.TTL);
             var saveResult = database.Save(key, newValue);
 
             if (saveResult.IsValid)
-                return new GenericResult<DatabaseValue>(newValue).Valid();
-            else
-                return new GenericResult<DatabaseValue>().Invalid();
+                return new EvaluationResult(number);
+
+            return new EvaluationResult().Invalid();
         }
     }
 }
