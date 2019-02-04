@@ -4,7 +4,7 @@
     {
         None = 0,
         String = 1,
-        Long = 2,
+        Number = 2,
         StringArray = 3,
     }
 }

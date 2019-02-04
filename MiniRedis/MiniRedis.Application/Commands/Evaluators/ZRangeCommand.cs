@@ -49,7 +49,7 @@ namespace MiniRedis.Services.Commands.Evaluators
 
             list = list.Take(stop).Skip(start).ToList();
 
-            return new EvaluationResult(list.Aggregate((a, b) => $"{a}\n{b}"));
+            return new EvaluationResult(list.ToArray());
         }
     }
 }

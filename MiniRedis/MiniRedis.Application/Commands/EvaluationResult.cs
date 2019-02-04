@@ -1,5 +1,6 @@
 ﻿using MiniRedis.Common.Model;
 using MiniRedis.Services.Commands.Enums;
+using System.Linq;
 
 namespace MiniRedis.Services.Commands
 {
@@ -7,7 +8,7 @@ namespace MiniRedis.Services.Commands
     {
         public ResultValueType ValueType { get; }
 
-        public long? Number { get; }
+        public long Number { get; }
         public string String { get; }
         public string[] StringArray { get; }
 
@@ -18,7 +19,7 @@ namespace MiniRedis.Services.Commands
 
         public EvaluationResult(long number)
         {
-            ValueType = ResultValueType.Long;
+            ValueType = ResultValueType.Number;
             Number = number;
         }
 
@@ -32,6 +33,30 @@ namespace MiniRedis.Services.Commands
         {
             ValueType = ResultValueType.StringArray;
             StringArray = array;
+        }
+
+        public override string ToString()
+        {
+            switch (ValueType)
+            {
+                case ResultValueType.Number:
+                    return $"(integer) {Number}";
+
+                case ResultValueType.String:
+                    if (String == null)
+                        return "(nil)";
+
+                    return $"\"{String}\"";
+
+                case ResultValueType.StringArray:
+                    if ((StringArray?.LongLength ?? 0) == 0)
+                        return "(empty list or set)";
+
+                    var i = 0;
+                    return StringArray.Aggregate((a, b) => $"{++i}) {a}\n{++i}) {b}");
+            }
+
+            return string.Empty;
         }
     }
 }

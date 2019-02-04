@@ -32,12 +32,15 @@ namespace MiniRedis.Services.Commands.Evaluators
 
             if (item.Data.Type != Storage.Enums.DatabaseValueType.ScoredCollection)
                 return new EvaluationResult().WithError("WRONGTYPE Operation against a key holding the wrong kind of value");
-                       
+
             var collection = item.Data.Value as ScoredCollection;
 
             var rank = collection.SortedList.IndexOf(member);
 
-            return new EvaluationResult(rank == -1 ? null : rank.ToString());
+            if (rank == -1)
+                return new EvaluationResult((string)null);
+
+            return new EvaluationResult(rank);
         }
     }
 }

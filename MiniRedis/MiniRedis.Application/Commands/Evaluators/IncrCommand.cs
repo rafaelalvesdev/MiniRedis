@@ -30,7 +30,7 @@ namespace MiniRedis.Services.Commands.Evaluators
             if (item.IsValid && !long.TryParse(Convert.ToString(item.Data.Value), out number))
                 return new EvaluationResult().WithError("value is not an integer or out of range");
 
-            var newValue = new DatabaseValue((++number).ToString(), item.Data.TTL);
+            var newValue = new DatabaseValue((++number).ToString(), item.Data?.TTL);
             var saveResult = database.Save(key, newValue);
 
             if (saveResult.IsValid)

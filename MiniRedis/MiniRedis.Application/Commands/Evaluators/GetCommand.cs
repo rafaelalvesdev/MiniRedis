@@ -31,8 +31,8 @@ namespace MiniRedis.Services.Commands.Evaluators
 
             if (value.Data.Type != Storage.Enums.DatabaseValueType.Plain)
                 return new EvaluationResult().WithError("WRONGTYPE Operation against a key holding the wrong kind of value");
-            
-            return new EvaluationResult(Convert.ToString(value.Data));
+
+            return new EvaluationResult(Convert.ToString(value.Data.Value));
         }
     }
 }
